@@ -1,0 +1,653 @@
+<title>FNT症例ライブラリ</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --paper:#E7EAE5; --surface:#FCFCFA; --surface-2:#F1F3EE;
+    --ink:#191C19; --ink-2:#414741; --muted:#6C736B;
+    --rule:#D2D6CE; --rule-strong:#B6BCB2;
+    --accent:#8C2F39; --accent-soft:#8C2F3918;
+    --ok:#3F6B4C; --partial:#8A6A12; --miss:#55606E;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#131614; --surface:#1B1F1C; --surface-2:#222724;
+      --ink:#E6E9E3; --ink-2:#BCC2B9; --muted:#8C948A;
+      --rule:#2C322D; --rule-strong:#3D453E;
+      --accent:#D9707A; --accent-soft:#D9707A1F;
+      --ok:#7FB68D; --partial:#CBA53F; --miss:#93A0B0;
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#131614; --surface:#1B1F1C; --surface-2:#222724;
+    --ink:#E6E9E3; --ink-2:#BCC2B9; --muted:#8C948A;
+    --rule:#2C322D; --rule-strong:#3D453E;
+    --accent:#D9707A; --accent-soft:#D9707A1F;
+    --ok:#7FB68D; --partial:#CBA53F; --miss:#93A0B0;
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+    font-size:15px; line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:0 64px}
+
+  header.masthead{
+    border-bottom:1px solid var(--rule-strong); padding-block:28px 18px;
+    display:flex;flex-wrap:wrap;gap:16px 28px;align-items:flex-end;justify-content:space-between;
+  }
+  .title-block h1{
+    font-family:"Zen Old Mincho",serif;font-weight:700;
+    font-size:clamp(26px,4.4vw,38px);letter-spacing:.04em;margin:0;line-height:1.25;text-wrap:balance;
+  }
+  .kicker{font-family:"Roboto Mono",monospace;font-size:11px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+  .title-block p.sub{margin:6px 0 0;color:var(--ink-2);font-size:13.5px;max-width:58ch}
+  .counts{display:flex;gap:22px;font-family:"Roboto Mono",monospace;font-variant-numeric:tabular-nums}
+  .counts div{text-align:right}
+  .counts b{display:block;font-size:26px;font-weight:500;line-height:1.1}
+  .counts span{font-size:10.5px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+
+  .cols{display:grid;grid-template-columns:238px minmax(0,1fr);gap:36px;margin-top:26px;align-items:start}
+  @media (max-width:820px){.cols{grid-template-columns:1fr;gap:20px}}
+  aside{position:sticky;top:calc(env(safe-area-inset-top, 0px) + 12px)}
+  @media (max-width:820px){aside{position:static}}
+
+  .field{margin-bottom:22px}
+  .field > h3{font-family:"Roboto Mono",monospace;font-size:10.5px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 9px;font-weight:500}
+  input[type=search]{width:100%;padding:9px 11px;font:inherit;font-size:14px;
+    background:var(--surface);color:var(--ink);border:1px solid var(--rule-strong);border-radius:3px}
+  input[type=search]:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:5px}
+  .chip{font:inherit;font-size:12px;line-height:1.5;padding:3px 9px;border-radius:999px;cursor:pointer;
+    background:transparent;color:var(--ink-2);border:1px solid var(--rule-strong);
+    transition:background .12s,color .12s,border-color .12s}
+  .chip:hover{border-color:var(--ink-2)}
+  .chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .chip .n{font-family:"Roboto Mono",monospace;font-size:10.5px;opacity:.6;margin-left:4px}
+  .reset{margin-top:4px;font:inherit;font-size:12px;color:var(--accent);background:none;border:none;
+    padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+  .resultbar{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;
+    font-family:"Roboto Mono",monospace;font-size:11.5px;letter-spacing:.1em;color:var(--muted);
+    border-bottom:1px solid var(--rule);padding-bottom:8px}
+
+  .cases{list-style:none;margin:0;padding:0}
+  .case{border-bottom:1px solid var(--rule)}
+  .case-head{width:100%;text-align:left;background:none;border:none;cursor:pointer;font:inherit;color:inherit;
+    display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:0 14px;align-items:start;
+    padding:15px 4px 15px 13px;position:relative}
+  .case-head::before{content:"";position:absolute;left:0;top:15px;bottom:15px;width:3px;border-radius:2px;
+    background:var(--stripe,var(--rule-strong))}
+  .case-head:hover{background:var(--surface-2)}
+  .cid{font-family:"Roboto Mono",monospace;font-size:11px;color:var(--muted);padding-top:6px;letter-spacing:.04em}
+  .case-title{display:block;font-family:"Zen Old Mincho",serif;font-weight:700;font-size:17px;
+    line-height:1.5;margin:0;text-wrap:balance}
+  .case-chief{display:block;margin:3px 0 7px;color:var(--ink-2);font-size:13px}
+  .tagline{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+  .tag{font-size:11px;line-height:1.6;padding:1px 7px;border-radius:2px;
+    background:var(--surface-2);color:var(--ink-2);border:1px solid var(--rule)}
+  .tag.round{background:transparent;border-style:dashed}
+  .verdict{font-family:"Roboto Mono",monospace;font-size:10.5px;letter-spacing:.1em;
+    padding-top:6px;white-space:nowrap;text-align:right}
+  .v-ok{color:var(--ok)} .v-partial{color:var(--partial)} .v-miss{color:var(--miss)} .v-none{color:var(--muted)}
+  @media (max-width:640px){
+    .case-head{grid-template-columns:auto minmax(0,1fr)}
+    .verdict{grid-column:2;text-align:left;padding-top:6px}
+  }
+
+  .detail{padding:2px 4px 26px 16px}
+  .meta{display:flex;flex-wrap:wrap;gap:6px 22px;margin:0 0 20px;font-size:12px;color:var(--muted);
+    border-top:1px solid var(--rule);padding-top:12px}
+  .meta b{color:var(--ink-2);font-weight:500}
+  .sec{display:grid;grid-template-columns:26px minmax(0,1fr);gap:0 12px;margin-bottom:16px}
+  .sec > .num{font-family:"Roboto Mono",monospace;font-size:11px;color:var(--accent);
+    border-top:2px solid var(--accent);padding-top:5px}
+  .sec h4{margin:0 0 3px;font-size:12px;letter-spacing:.1em;color:var(--muted);font-weight:500;
+    font-family:"Roboto Mono",monospace;text-transform:uppercase}
+  .sec p{margin:0 0 7px;font-size:14px;color:var(--ink-2)}
+  .sec p:last-child{margin-bottom:0}
+  .sec strong{color:var(--ink);font-weight:700}
+  .sec ul{margin:0 0 7px;padding-left:1.15em;font-size:14px;color:var(--ink-2)}
+  .sec li{margin-bottom:3px}
+  .ba{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 10px;font-size:14px;margin:0 0 7px}
+  .ba dt{font-family:"Roboto Mono",monospace;font-size:11px;color:var(--muted);padding-top:5px}
+  .ba dd{margin:0;color:var(--ink-2)}
+  .note{background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--accent);
+    padding:10px 13px;font-size:13.5px;color:var(--ink-2);margin:0 0 7px}
+  .note h5{margin:0 0 4px;font-size:12px;color:var(--ink);letter-spacing:.06em}
+  .note ul{margin:4px 0 0;padding-left:1.1em}
+  .note li{margin-bottom:2px}
+  .srcs{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px}
+  .sheetlink{font-family:"Roboto Mono",monospace;font-size:11.5px;color:var(--accent);
+    text-decoration:none;border-bottom:1px solid currentColor}
+  .sheetlink:hover{opacity:.75}
+
+  footer{margin-top:54px;border-top:1px solid var(--rule);padding-top:14px;font-size:12px;color:var(--muted)}
+  footer p{margin:0 0 5px}
+  .empty{padding:40px 0;color:var(--muted);text-align:center;font-size:14px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="title-block">
+      <p class="kicker">FNT Neuro Community — Clinical Share</p>
+      <h1>FNT症例ライブラリ</h1>
+      <p class="sub">臨床シェア会に持ち寄られた症例を、ヒストリー→仮説→アセスメント→リアセスメント→アウトカムの5段で読む。疑った神経系から逆引きできます。</p>
+    </div>
+    <div class="counts">
+      <div><b id="cnt-total">20</b><span>症例</span></div>
+      <div><b>2</b><span>開催回</span></div>
+    </div>
+  </header>
+
+  <div class="cols">
+    <aside>
+      <div class="field">
+        <h3>検索</h3>
+        <input type="search" id="q" placeholder="主訴・ドリル・学び…" aria-label="症例を検索">
+      </div>
+      <div class="field"><h3>開催回</h3><div class="chips" id="f-round"></div></div>
+      <div class="field"><h3>疑った神経系</h3><div class="chips" id="f-sys"></div></div>
+      <div class="field"><h3>クライアント種別</h3><div class="chips" id="f-type"></div></div>
+      <div class="field"><h3>アウトカム</h3><div class="chips" id="f-out"></div></div>
+      <div class="field">
+        <h3>仮説の的中</h3>
+        <div class="chips" id="f-hit"></div>
+        <button class="reset" id="reset" type="button">すべて解除</button>
+      </div>
+    </aside>
+
+    <main>
+      <div class="resultbar">
+        <span id="resultcount">20 CASES</span>
+        <span>行をクリックで全文</span>
+      </div>
+      <ul class="cases" id="list"></ul>
+      <p class="empty" id="empty" hidden>条件に合う症例がありません。</p>
+
+      <footer>
+        <p>出典：Notion「🧠 FNT症例ライブラリ」（2026夏・10件）／Googleドライブ「2026秋_臨床シェア提出分」の手書きシート14枚（2026秋・10件）。</p>
+        <p>クライアントは年代・性別のみ。発表者はイニシャル表記に統一しています（原本の記名は Drive のシートにあります）。原本へのリンクは共有ドライブ／Notion のアクセス権がある人だけ開けます。</p>
+        <p>記録の要は before→after のリアセスメント。原本に記録がない項目は「記録なし」と残しています。</p>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<script>
+const SUM = "2026夏 7/12", AUT = "2026秋 9/13";
+const N = id => ["Notion 原本（要アクセス権）", "https://app.notion.com/p/" + id];
+const D = (name, id) => [name + "（要アクセス権）", "https://drive.google.com/file/d/" + id + "/view"];
+
+const CASES = [
+ {id:"FNT-1",round:SUM,emoji:"🏐",title:"ジャンプ時のスネの痛み（元バレー日本代表・女性）",presenter:"M.H.さん",type:"アスリート",
+  chief:"ジャンプすると片側（右）のスネが痛い",sys:["末梢神経","前庭系","固有受容"],hit:"○ 当たり",out:"単回で完結",
+  approach:"感覚テストで左右差を確認→腓骨神経モビライゼーション→針＋バイブレーションのスタッキングで定着",
+  src:[N("39b2999fc9f88177b39ac6c2d91e6ecd")],
+  history:"ジャンプ時に片側（右）のスネが痛くジャンプできない。着地/踏切のどちらで痛むかは要確認。",
+  hypo:["<strong>疑った神経系：</strong>末梢神経（腓骨神経＝下腿外側の感覚）／前庭系／固有受容",
+        "<strong>手がかり：</strong>感覚テストで痛い側の感覚が明らかに薄い（振動・刷毛・温冷すべて）。",
+        "<strong>ひと言仮説：</strong>腓骨神経領域の感覚入力不足が、下腿の運動出力（跳躍）を抑制している。"],
+  assess:["感覚チェック（左右比較）→歩行→ジャンプの順で確認。腓骨神経モビライゼーションを実施。"],
+  before:"感覚に明確な左右差、跳躍時痛あり（8/10）。",
+  after:"感覚改善、歩行が速くなり、ジャンプ痛が1〜2に低下。針＋バイブをスタッキングして跳躍高が大きく向上。",
+  outcome:"1回のセッションで完結。ジャンプ痛がほぼ消失し、跳躍高が「こんなに飛べるの」と本人が驚くレベルまで向上。自宅ワークを渡して<strong>単回で自立</strong>。",
+  learn:"トップアスリートも予測（思い込み）に引っ張られずチェックすれば、普通の人と同じ小さなボトルネックが見つかる。優れているのは代償能力。"},
+
+ {id:"FNT-2",round:SUM,emoji:"🥊",title:"パンチドランカー（反復脳震盪＋アルコール依存）",presenter:"S.T.さん",type:"医療的ケア",
+  chief:"新しいことを覚えられない・電話/事務/子ども対応ができない、感覚全般が鈍麻、眼球が固まる",
+  sys:["小脳","前頭前野","迷走神経・自律神経","脳血流","三叉神経"],hit:"○ 当たり",out:"継続改善中",
+  approach:"エアハンガー/有酸素/サッケード/舌・前歯バイブ/VOR/抑制系トレ/ワーキングメモリ課題",
+  src:[N("39b2999fc9f88169a494ea4e7446b5c8")],
+  history:"元プロ格闘家。7連続KO・脳震盪反復＋飲酒。痙性斜頸、うつ、てんかん、アルコール依存の既往。昔の動作はできるが新規学習ができない。",
+  hypo:["<strong>疑った神経系：</strong>小脳／前頭前野／迷走神経・自律神経／脳血流／三叉神経",
+        "<strong>手がかり：</strong>感覚全般が鈍麻、眼球が固まって動かない、歩行異常、抑制がきかない。",
+        "<strong>ひと言仮説：</strong>反復外傷による脳血流障害と前頭前野・小脳の機能低下が、抑制と新規学習を妨げている。"],
+  assess:["エアハンガー、有酸素運動、サッケード、嗅覚刺激、舌・前歯へのバイブレーション（三叉神経は脳幹最大核でスタッキングの万能入口）、VOR、抑制系トレ、ワーキングメモリ課題。"],
+  reassessNote:"<strong>指標：</strong>眼球運動（固まっていたのが動くように）を客観指標に。主観は「気持ちいい」のみ。",
+  outcome:"段階的に改善。固まっていた眼球が動き、歩行改善、構音のタイムラグ減少。<strong>電話対応・ジムアプリの予約操作・子ども対応</strong>という以前できなかった実務ができるように。言い間違いも消失。本人が自主的に自宅で継続、進行中。",
+  learn:"うつ＝「抑制の極み」ではなく防御反応として捉える。主観が乏しくても客観指標を一つ決めると効果測定でき、その指標自体が刺激になる。"},
+
+ {id:"FNT-3",round:SUM,emoji:"🌀",title:"PPPD（持続性知覚性姿勢誘発めまい）",presenter:"H.T.さん（本人）",type:"一般",
+  chief:"立つと浮遊感・常に揺れて前につんのめる",sys:["前庭系","視覚系","固有受容","小脳","PMRF"],hit:"○ 当たり",out:"継続改善中",
+  approach:"OKN同心円（収束型）/ゆっくりOKN/トーンジェネレーター＋3D音/スムーズパースート調節モード/立位前後運動・後ろ歩き",
+  src:[N("39b2999fc9f881fbb377ff170a63b972")],
+  history:"立つと浮遊感、常に揺れて前につんのめる。震災の余震期（2011）＋直前のバランスシューズ4ヶ月がきっかけ。猫背・内股、幼少期の指しゃぶり、中学からブリッジ不可。薬物療法・めまいリハビリ・トリガーポイントは効かず。",
+  hypo:["<strong>疑った神経系：</strong>前庭系／視覚系／首・足の固有受容／小脳虫部／補足運動野／頭頂皮質（犯人多数）",
+        "<strong>ひと言仮説：</strong>前庭・視覚・体性感覚の情報が不足/不正確で脳が混乱し、安定姿勢に迷いが生じている。長年の姿勢不良で入力が少なく、可動域が増えても脳マッピングが更新されず新しい可動域が『脅威』になり固まる。"],
+  assess:["OKN同心円（収束型で屈筋がゆるみ顎が下がる）、ゆっくりOKN（約30の速さ）で中心のズレ矯正、トーンジェネレーター＋3D音の方向づけ（骨伝導ヘッドホン）、スムーズパースート調節モードで左向き時の首の固有受容感覚を改善。"],
+  before:"あらゆる方向に引っ張られる揺れ、右奥歯で噛めない、足を組みたくなる。",
+  after:"顔の中心のズレが矯正され右奥歯で噛める、足を組まなくても落ち着く、首の可動域が滑らかに。",
+  outcome:"約2年の取り組みで、身体が前後の揺れに落ち着き、体の中心に力が入るように。大幅改善だが統合は途上（年内完治が目標）。",
+  learn:"一般的なめまいリハビリ（集団・負荷無視のサッケード/頭ブンブン）は逆に脳の脅威になり得る。個別化と負荷設定が要。",
+  next:"立位で前後運動・後ろ歩き（前庭の前後方向＝LAN系）、OKN同心円の統合モードでバランス統合。→ 続きは FNT-16（2026秋の提出）"},
+
+ {id:"FNT-4",round:SUM,emoji:"🦵",title:"変形性膝関節症（63歳女性・両親介護）",presenter:"T.さん",type:"一般",
+  chief:"左膝が特に痛い（両側診断）、靴紐を脱ぐ角度で痛い、O脚",sys:["PMRF","小脳","固有受容","末梢神経","前庭系"],
+  hit:"△ 一部",out:"一時改善の反復",
+  approach:"右肘ミラーリング/足裏感覚/T-VOR/バンドミラーリング→慢性痛（ニューロタグ）対応へ",
+  src:[N("39b2999fc9f881b9b649e201eaebcc92")],
+  history:"左膝が特に痛い（両側診断）。靴紐を脱ぐ角度で痛い、明らかなO脚。週2で両親の介護、腰痛もあり。他所で『筋トレはやめてストレッチだけ』と言われた。",
+  hypo:["<strong>疑った神経系：</strong>PMRF（脳幹の姿勢・体幹安定領域、左に所見）／小脳（左）／固有受容（足裏・扁平足）／末梢神経",
+        "<strong>手がかり：</strong>ロンバーグ左足5秒/右15秒、外反母趾（親指が曲がっている）。"],
+  assess:["右肘ミラーリング→足裏感覚→T-VOR（横歩き走行3往復）→バンドで強めのミラーリング。"],
+  before:"台の昇降で痛み、靴紐が結べない。",
+  after:"各ワークでその場改善するが、慢性痛ゆえ『効いては戻る』を反復。",
+  outcome:"各ワークで一時改善（靴紐が結べる/昇降痛が減）するが再発を反復。現在はバンドミラーリングで改善中だが再発懸念。→単一ワーク追求から『全体の脅威を下げる』方針へ転換。",
+  learn:"2年超の慢性痛はニューロタグ（脳が学習した“痛みを出す回路”）を形成。睡眠・靴・疲労・ストレス等の脅威が膝痛として出る。一つの正解ワークに固執せず全体の脅威を下げる。PMRFの左右チェックで方向性の二択を一つ消せるのは有用。"},
+
+ {id:"FNT-5",round:SUM,emoji:"🧩",title:"小脳脊髄変性症（70代女性・指定難病）★MVP",presenter:"Y.さん",type:"難病・進行性疾患",
+  chief:"まっすぐ立てず開眼でも倒れる、焦点合わず、構音障害で8〜9割聞き取れない",
+  sys:["小脳","固有受容","末梢神経","視覚系","前庭系","三叉神経"],hit:"○ 当たり",out:"現状維持・悪化なし",
+  approach:"左半身の感覚刺激を徹底→舌トレ/小脳8の字/ブリッジ＋サッケード/感覚スタッキング",
+  src:[N("39b2999fc9f881dea504efe69fc4f9a9")],
+  history:"遺伝性・進行性の指定難病。初回はまっすぐ立てず、開眼でも倒れ、焦点合わず、構音障害で8〜9割聞き取れず、夫に抱えられて来所。",
+  hypo:["<strong>疑った神経系：</strong>小脳（開閉眼で不変＝視覚でない→小脳）。その後 固有受容・末梢神経・視覚・前庭・三叉神経へ拡大。",
+        "<strong>手がかり：</strong>開眼/閉眼で状態不変。ロンバーグ不能。"],
+  assess:["出張先で道具限定。バイブレーションの左右チェック→<strong>左半身全体の振動覚が薄い</strong>と判明。左だけを仰向け・うつ伏せで徹底的に感覚刺激。以降、舌トレ、小脳8の字（ペットボトル）、ブリッジ＋サッケードなど。"],
+  before:"抱えられないと立てない、焦点合わず。",
+  after:"<strong>初日終了時点で立てるように</strong>。フィンガーノーズは閉眼でもほぼ外さない（左は遅い）、サッケード可能に。",
+  outcome:"1年後には毎月飛行機で東京へ通い観光もこなすレベルに回復、構音9〜10割理解可能。進行性難病でここ2〜3ヶ月は状態キープ＝<strong>悪化なしの現状維持</strong>を達成。",
+  learn:"『難病＝絶望』という予測に引っ張られず、『できるアセスメントからやってみよう』と入れたことが突破口。",
+  next:"脊柱起立筋バイブ＋サッケードのスタッキング、視野チェック→ヘミフィールドグラス、光/タッチ/匂いを左側から、脳神経1〜12＋耳の感覚を全チェック。"},
+
+ {id:"FNT-6",round:SUM,emoji:"🩹",title:"首・腰の慢性不調（40代女性・元同僚）",presenter:"H.S.さん",type:"一般",
+  chief:"反り腰、1ヶ月前ぎっくり腰、今は首が痛くうなずくと背中がピリピリ",
+  sys:["視覚系","前庭系","固有受容","末梢神経"],hit:"○ 当たり",out:"継続改善中",
+  approach:"3回かけて検証→5歳時の虫垂炎手術痕へのアプローチが決め手／副神経・尺骨/正中神経スタッキング／2点識別",
+  src:[N("39b2999fc9f8815fa99becd7cefec127")],
+  history:"反り腰・目を固める。1ヶ月前ぎっくり腰、今は首が痛くうなずくと背中がピリピリ。中学で視力悪化→首痛・初ぎっくり腰、以来慢性化。ピアノで右肩を上げる癖。年2回ほど迷走神経性失神。",
+  hypo:["<strong>疑った神経系：</strong>眼球運動・視覚／前庭／脊髄・固有受容／末梢神経",
+        "<strong>手がかり：</strong>VORがうまくできない（口が開き舌が出る）、2点識別で腰・腕の感覚鈍麻。ゴルフで握った手を自力で開けない。"],
+  assess:["3回のセッションで検証。スムーズパースート＋テニスボール、副神経スタッキング、尺骨・正中神経スタッキング、2点識別。関連痛を追う中で腹部の手術痕に到達。"],
+  before:"腰を丸める動作ができない。",
+  after:"5歳時の虫垂炎の手術痕を押しながら上に引くと、腰を丸める動作が痛みなく可能に。神経スタッキングで突っ張り感も減少。",
+  outcome:"3回目で決め手を発見。長年不可能だった『腰を丸める』が痛みなくできるように。長年の可動制限の原因を特定し解除、継続改善中。",
+  learn:"過去の手術痕・古傷を見落とさない（本人も忘れている）。問診で大きな手術・怪我は必ず聞く。3回かけて他の可能性を検証し尽くした上で当てたプロセス自体が学び。",
+  sheet:{title:"手書きシート補足（本人記入・発表用シートより）",
+    items:["<b>疑った神経系（本人記入）：</b>脊髄・視覚・前庭系",
+           "<b>手がかり：</b>視力が悪い・首を動かしにくい／前回 A-VOR がうまく出来なかった",
+           "<b>入れたドリル：</b>アイサークル／スムーズパースート＋後頭下顎にテニスボール ○／A-VOR ○／ペンシルプッシュアップ △／副神経ストレッチ ○／尺骨・正中神経スタッキング ○／腕の2点識別 ○／<b>虫垂の手術痕を押しながら上に引く ◎（決め手・5分）</b>",
+           "<b>本人の仮説判定：</b>△ 一部（＋「問題が多すぎて、肝心な“傷跡”を見逃していた」）"]}},
+
+ {id:"FNT-7",round:SUM,emoji:"🌀",title:"めまい・腰痛・尿もれ（30代女性・ステロイド服用）",presenter:"T.A.さん",type:"医療的ケア",
+  chief:"ステロイド服用による体重増・めまい・ふわふわ感・腰痛・尿もれ",sys:["前庭系","視覚系","島皮質"],
+  hit:"✕ ハズレ",out:"継続改善中",
+  approach:"視覚トレーニング（✕逆効果と判明）→印形の前後移動（バランス）/カラーボール/チューブで後屈が大幅改善",
+  src:[N("39b2999fc9f88169a478ef0a78c4aea6")],
+  history:"3年前、出産時の大量出血、その後子宮の病気でステロイド剤を服用したことで体調が悪化。めまいや疲れで運動ができなくなっている。病院で薬の調整はしてもらったが、これ以上は難しい。",
+  hypo:["<strong>疑った神経系：</strong>前庭／視覚／島皮質",
+        "<strong>なぜそう考えた：</strong>めまい、まぶしそうな目をしている。頭を傾けながら話す。体がゆらゆらしている印象。"],
+  assess:["<strong>最初のテスト：</strong>後屈・回旋。",
+          "<strong>入れたドリル：</strong>頭を動かすとめまいが起こるため、まず目のトレーニング（サッケード・注視・スムーズパースート・ブロックストリング・アイサークル・周辺視野）。"],
+  before:"後屈で痛みと可動域制限。",
+  after:"注視で痛みは残るが可動域は多少アップ。<strong>★重要な発見：</strong>周辺視野でかなり視野が広くはっきり見えすぎることが判明。このせいで目を使うと気が散りやすく、集中にかなりエネルギーを使って疲れることが分かった。",
+  outcome:"その後、印形（前後の移動＝バランス）やカラーボール、チューブトレーニングで<strong>後屈は大幅に改善</strong>。めまいはレッスン中の動きに関しては大丈夫になっている。",
+  learn:"視覚のみのトレーニングではマイナスな反応が出るが、体を動かす前庭系や「遊び」を取り入れたトレーニングで効果大。仮説自体は✕ハズレだったが、「視覚単体では逆効果」という発見が大きな学びになった好例。"},
+
+ {id:"FNT-8",round:SUM,emoji:"🦵",title:"膝痛・正座不可（60代女性）",presenter:"T.N.さん",type:"一般",
+  chief:"右膝が痛くて正座ができない（足首・特に外転がきっかけ）",sys:["固有受容"],hit:"○ 当たり",out:"単回で完結",
+  approach:"足首（特に外転）の左右差を確認→足指を動かし動きにくい方向へ導く→足首をゆっくり回す",
+  src:[N("39b2999fc9f8817abe66cacc9966e677")],
+  history:"右膝が痛くて、正座ができなくなった。足首（特に外転）から調子が悪いと感じている。",
+  hypo:["<strong>疑った神経系：</strong>固有受容","<strong>なぜそう考えた：</strong>足首（特に外転）の動きに制限。",
+        "<strong>ひと言仮説：</strong>「足首の動き（入力不足）が 膝の動き を抑制している」"],
+  assess:["<strong>最初のテスト：</strong>左右の足首（外側）の可動・制御を左右比較。正座の可否。",
+          "<strong>入れたドリル：</strong>足指をぐっと動かし、動きにくい方向に導く。まず自分で動かしてもらい→足首をゆっくり回す。"],
+  before:"正座で膝に痛み・つっぱり、左右差あり。",
+  after:"左右差が減り、足首の外転が改善。膝のつっぱりが減り正座しやすくなった。",
+  outcome:"足首（固有受容）へのアプローチでその場で膝のつっぱりが減り、正座がしやすくなった。膝を直接いじらず、上流（足首）の感覚入力を整えたのが奏効。",
+  learn:"膝の痛みの入口が膝ではなく足首の固有受容だったケース。症状のある場所と原因の場所は違う。"},
+
+ {id:"FNT-9",round:SUM,emoji:"🧠",title:"頭痛・背中痛（40代女性・秘書職・常連）",presenter:"N.K.さん",type:"一般",
+  chief:"こめかみ〜頭全体の痛み、首肩こり〜右肩甲骨内側の痛み、長く続く咳",
+  sys:["小脳","PMRF","迷走神経・自律神経","三叉神経"],hit:"○ 当たり",out:"一時改善の反復",
+  approach:"左耳栓/カラーレンズでの抑制/ハミング＋舌を反対へ押しつけ/左奥歯で舌圧子を噛む＋バイブレーション。日常は耳栓・マウスピースでマネジメント",
+  src:[N("39c2999fc9f8815bbe58f2b662e54b7f")],
+  history:"外資系銀行の理事長秘書という仕事柄、ストレスと疲労が大きい。感覚刺激（綿棒・シャープ・温冷・バイブなど）・交差反射・ニアファー・ペンシルプッシュアップ・注視 などを試している。",
+  hypo:["<strong>疑った神経系：</strong>左小脳／右PMRF（右延髄）／右中脳の交感神経の過活性／迷走神経",
+        "<strong>なぜそう考えた：</strong>アセスメントで左側が弱い。",
+        "<strong>ひと言仮説：</strong>「右皮質 が 左皮質 を抑制している（or 入力不足）」"],
+  assess:["<strong>最初のテスト：</strong>RAPS・ロンバーグ・足タッピング・歩行・体幹の回旋・前後屈・首・腕を前/横に上げる。",
+          "<strong>入れたドリル：</strong>左耳栓／カラーレンズでの抑制／ハミングと舌を反対へ押しつける／左奥歯で舌圧子を噛む＋バイブレーション。"],
+  before:"痛み 10／可動域に制限。",
+  after:"可動域などが広がり、痛みも減った（10→2）。",
+  outcome:"その場では痛み10→2・可動域拡大と大きく改善。ただし常連のクライアントで<strong>毎日同じような主訴に戻る</strong>ため、ワークをじっくり行える状況ではないときは、耳栓などの抑制とマウスピース（削って食事時につけて噛む）で日常的にマネジメント。",
+  learn:"常連で毎回同じ主訴に戻るケースは、セッションでの改善だけでなく、日常で続けられる抑制・セルフ手段（耳栓・マウスピース等）を渡すことでマネジメントしやすくなる。"},
+
+ {id:"FNT-10",round:SUM,emoji:"🧓",title:"全身の慢性疼痛・反復する白目の出血（63歳男性）",presenter:"I.R.さん",type:"一般",
+  chief:"後首の張り・両脚の重だるさと痛み、股関節/ふくらはぎの痛み、反復する白目の出血（結膜下出血）",
+  sys:["前庭系","小脳","前頭前野","迷走神経・自律神経","三叉神経","固有受容","PMRF"],hit:"○ 当たり",out:"継続改善中",
+  approach:"皮膚・固有受容覚レセプターへの刺激/スタッキング/股関節CKC/注視・輻輳/VOR/トノトピー/音叉で患部へ振動刺激",
+  src:[N("39f2999fc9f88199a9edcfa9d878b47f")],
+  history:"後首の張りが強く、両脚が重く痛みがある。股関節のあたりやふくらはぎの痛みがなかなか取れない。片目ずつだけどしょっちゅう白目の血管が破れて出血する。2年前ぐらいと時期は曖昧。別の鍼灸などの治療院で効果はあったが痛みが戻っている。",
+  hypo:["<strong>疑った神経系：</strong>前庭小脳／前頭前野／運動野・補足運動野／迷走神経／顔面神経／三叉神経／脳幹（延髄）",
+        "<strong>ひと言仮説：</strong>「神経の機能 が 小脳・皮質等 を抑制している（or 入力不足）」複数の感覚入力で神経を再調整し、脳の脅威を減らす。"],
+  assess:["<strong>最初のテスト：</strong>RAPS、体幹の回旋・屈曲・伸展、上肢・肩の屈曲外転、可動域の現状測定。",
+          "<strong>入れたドリル：</strong>皮膚及び固有受容覚のレセプターへの刺激・スタッキング・股関節CKC（スクワット等）。注視・輻輳、手足の固有受容覚、前庭覚（VOR）、トノトピー、感覚刺激（皮膚疼痛部位・顔面・耳周辺）、音叉で患部へ振動刺激。"],
+  before:"痛み・可動域に制限。",
+  after:"アセスメント＋ドリル＋リアセスメントを通して痛み・可動域が改善。セルフケア法を継続して実施。",
+  outcome:"セルフケア継続により<strong>症状は軽減が持続</strong>。気にしていた<strong>眼（白目）の出血もその後生じていない</strong>。",
+  learn:"使っていない神経機能に、主訴に見合う様々な刺激インプットを与えるとアウトプットが変化し、改善傾向への道が開く。（発表者コメント：仮説は当たったように思うが、まだ他の方法もあったかとフィードバック中。）"},
+
+ /* ───────── 2026秋 9/13 ───────── */
+
+ {id:"FNT-11",round:AUT,emoji:"🕯",title:"やる気が出ない・疲れがとれない（50代女性）",presenter:"N.K.さん",type:"一般",
+  chief:"やる気が出ない・前向きな気分になれない・疲れがとれない",
+  sys:["島皮質","前頭前野","嗅覚系"],hit:"✕ ハズレ",out:"その場で変化",date:"2026-09-10",
+  approach:"右半身／左半身の感覚を比較 → 左の感覚入力で安定。嗅覚（右がNG）と「家のにおい」に本人が納得",
+  src:[D("シート原本 IMG_6513","1RduTSJtNSjTPOAf8CArCo8brgELpr015")],
+  history:"ケガや病気はなし。義母と同居をはじめた1年ほど前から調子が上がらなくなってきた。快腸。小麦系は疲れるので食べていない。職業は調理師。",
+  hypo:["<strong>疑った神経系：</strong>島皮質／左脳（GO）／右脳（STOP）",
+        "<strong>なぜそう考えた：</strong>うつ＝左の前頭前野の低下、右の島皮質の過活性。左脳（GO）を活性させれば、やる気が回復するのでは？ → 右半身の感覚入力から入る。",
+        "<strong>ひと言仮説：</strong>「右脳 が 行動 を抑制している（or 入力不足）」"],
+  assess:["<strong>最初のテスト：</strong>右半身の感覚 → 左半身の感覚。左が悪いので、左のフィンガーノーズ、左のボールトス → 眼も左が動きづらい。",
+          "<strong>所見：</strong>心拍確認。においは<strong>右がNG</strong>。聴覚・視覚は左がNG。ロンバーグは左に倒れる。"],
+  before:"左右の感覚に差。ロンバーグで左に倒れる。",
+  after:"<strong>左</strong>の感覚入力で安定した。本人的には「家のにおい」に納得した。",
+  outcome:"仮説では右半身（左脳）から入るつもりが、実際に効いたのは左の感覚入力。嗅覚の左右差が手がかりになり、本人の納得が得られた。",
+  learn:"嗅覚と、本人の納得感。"},
+
+ {id:"FNT-12",round:AUT,emoji:"🦶",title:"骨折後の右足第1趾の違和感（52歳女性）",presenter:"I.R.さん",type:"一般",
+  chief:"1年前に右足第1趾を骨折して、親指は曲がらないし重だるくて疲れる。いつも違和感がある",
+  sys:["PMRF","前庭系","固有受容"],hit:"△ 一部",out:"その場で変化",date:"2026-09-13",
+  approach:"VOR・RAPS・輻輳・足の固有受容覚・二点識別・ロンバーグ → モーターコントロール／バイブレーション／楊枝による末梢・皮膚への刺激／においの識別刺激",
+  src:[D("シート原本 IMG_6514","1a-BbwN99L3tE2WQgNYblYCtToy-6LvOT")],
+  history:"2025年5月の連休中に転倒して右足第1趾を骨折。整形外科病院に通院したが完治せず。",
+  hypo:["<strong>疑った神経系：</strong>PMRF／前庭神経",
+        "<strong>なぜそう考えた：</strong>無意識の身体調整などを担う機能が低下していると思った。また骨折後を考慮した。"],
+  assess:["<strong>最初のテスト：</strong>VOR、RAPS、輻輳、足の固有受容覚、二点識別、ロンバーグ。",
+          "<strong>所見：</strong>患部は特に、四肢の機能低下があった。",
+          "<strong>入れたドリル：</strong>モーターコントロール、バイブレーション、楊枝による末梢や皮膚への刺激、においの識別刺激。"],
+  before:"患部の感覚が鈍く、四肢の機能低下。",
+  after:"楊枝による刺激により、<strong>感覚がにぶくなくなった</strong>とクライアントから言われた。全てリアセスメントを実施し効果を感じた。",
+  outcome:"末梢・皮膚への反復刺激で患部の感覚が戻り、その場で変化を確認できた。",
+  learn:"繰り返し刺激は症状改善への糸口になる。"},
+
+ {id:"FNT-13",round:AUT,emoji:"👁",title:"目の疲労・背中〜腰の痛み（60代女性）",presenter:"S.Y.さん",type:"一般",
+  chief:"目の疲れがひどくて痛い、目を使えない。座った姿勢での背中〜腰の痛みがある",
+  sys:["視覚系","前庭系"],hit:"△ 一部",out:"その場で変化",date:"2026-09-13",
+  approach:"パーミング／目を閉じて八方への眼球運動／上・右上方向へ向ける意識（感覚が薄いため）／額・こめかみ・頬に指で触って行う",
+  src:[D("シート原本 IMG_6515","1m8nW36Jt-xHKssmT7KBm4t_8XGHf7-Kv")],
+  history:"目の疲れや痛みはここ2〜3日。背中〜腰の痛みは座った姿勢時にしばらくすると生じてくる。",
+  hypo:["<strong>疑った神経系：</strong>視覚（前庭系）",
+        "<strong>なぜそう考えた：</strong>目の疲れが、視覚からの影響が大きいと考えたため。",
+        "<strong>ひと言仮説：</strong>「眼球運動の偏り が 視覚 を抑制している（or 入力不足）」"],
+  assess:["<strong>最初のテスト：</strong>首・体幹・腕。体幹→右回転しにくい。腕→左腕挙上時に違和感。体側→右に倒しにくい（左脇がつっぱる）。",
+          "<strong>入れたドリル：</strong>パーミング。目を閉じて八方への眼球運動。上・右上方向へ向ける意識（感覚が薄いため）。額・こめかみ・頬に指で触って行ってみる。"],
+  before:"体幹は右回転しにくい／腕挙上で違和感／体側は右に倒しにくい。",
+  after:"首→動きやすくなる。体幹→アセスメント時より右に回転する。腕→違和感変わらず。体側→多少右に倒しやすくなるが、<strong>左脇・腰の痛みが顕著に出現</strong>。",
+  outcome:"眼球運動の入力で首・体幹は変化したが、腕の違和感は残り、体側では別の痛みが表に出た。",
+  learn:"視覚（眼球運動）による変化を、全身の状態と繋げていく入口として捉えることができた。"},
+
+ {id:"FNT-14",round:AUT,emoji:"💪",title:"肩を挙上すると痛い（50代女性）",presenter:"Y.S.さん",type:"一般",
+  chief:"50肩になったみたいで、挙げると痛いです",
+  sys:["固有受容"],hit:"○ 当たり",out:"その場で変化",date:"2026-09-07",
+  approach:"クライアントの訴える痛みの場所そのものに、3ヶ所ピンポイントでアプローチ",
+  src:[D("シート原本 IMG_6516","1lQMF-1G8iJ2_05jQQvt3K8eb4Zyyo6iw")],
+  history:"数週間前から急に痛みだした。まだ何も試していない。",
+  hypo:["<strong>疑った神経系（本人記入）：</strong>肩の靱帯",
+        "<strong>なぜそう考えた：</strong>数ヶ月前に習った靱帯のワークを試したかったから。",
+        "<strong>ひと言仮説：</strong>「靱帯 が 肩の挙上 を抑制している（or 入力不足）」"],
+  assess:["<strong>最初のテスト：</strong>肩の挙上を前と横から。",
+          "<strong>入れたドリル：</strong>3ヶ所、ピンポイントを、クライアントの導いた痛みのある場所に行いました。"],
+  before:"肩の挙上（前・横）で痛み。",
+  after:"リアセスメントの後、痛みのある場所を教えていただき、その場所をピンポイントに行い、リアセスメントとして肩を挙上してもらう（この順番で実施）。",
+  outcome:"クライアント自身が示した痛みの場所を入口にして、その場で挙上の変化を確認できた。",
+  learn:"靱帯の場所が正確に分からずとも、クライアントの訴える痛みの場所に指を置くとコリコリが見つかります。"},
+
+ {id:"FNT-15",round:AUT,emoji:"🫁",title:"脳の衰えを防ぎたい／呼吸がスムーズでない（50代女性）",presenter:"H.T.さん（FNT-16とは別の方）",type:"一般",
+  chief:"事前「記憶力が低下している、脳の衰えを防ぎたい」／当日「ヨガを始めたけど呼吸がスムーズでなく疲れやすい。首を右に向けると痛い。眼が疲れる」",
+  sys:["迷走神経・自律神経","大脳新皮質","島皮質"],hit:"△ 一部",out:"その場で変化",
+  approach:"首の感覚・皮フ／ボールキャッチ／スムーズパースート／サッカード／アンチサッカード／A-VOR／ラテラルオープナー／横隔膜ストレッチ／エアハンガー／ハミング",
+  src:[D("シート原本 IMG_6517","1o05aiNEDXCmdfZobc-NmbCIUPbhewZjl")],
+  history:"年を経るごとに衰えを感じる。ヨガは始めたけれど、呼吸がスムーズでなく疲れやすい。",
+  hypo:["<strong>疑った神経系：</strong>迷走神経／大脳新皮質／島皮質",
+        "<strong>なぜそう考えた：</strong>声が小さくて反応が薄い。緊張しているか、人と話すのが苦手？ 仕事をしておらず、あまり外出しない。"],
+  assess:["<strong>最初のテスト：</strong>呼吸（背中）、ラテラルオープナー、首の回旋（右）。",
+          "<strong>入れたドリル：</strong>首の感覚・皮フ ○／ボールキャッチ ○／スムーズパースート／サッカード／アンチサッカード／A-VOR／ラテラルオープナー ○／横隔膜ストレッチ △／エアハンガー △／ハミング ○。"],
+  before:"呼吸・ラテラルオープナー・首の回旋（右）の3つとも制限。",
+  after:"3つとも良くはなったが、これというものが見つからなかった。ほぼどれも少し良くなる。<strong>翌日もらった感想は良かった</strong>。",
+  outcome:"どのドリルでも少しずつ改善するが、決め手が特定できず手応えは薄い。翌日の本人の感想は良好。",
+  learn:"深掘りがうまく出来なかった？ 根本的な原因に辿り着けなかった？"},
+
+ {id:"FNT-16",round:AUT,emoji:"🌀",title:"PPPD 15年半 ─ 眼球運動アセスメントの表から抗重力筋へ（本人）",presenter:"H.T.さん（本人）",type:"一般",
+  chief:"常にふらついているようなめまいが15年半続いている",
+  sys:["視覚系","前庭系","固有受容"],hit:"— 記録なし",out:"継続改善中",
+  approach:"サッカード・注視・スムーズパースートを全方向×左右眼で表にして可視化 → 眼と関係する抗重力筋を筋力テストで確認",
+  src:[D("考察 IMG_6518","17Kij0GmnnMykhI9-Uni6fduFd2QPsFCB"),
+       D("サッカード/注視の表 IMG_6519","19rZzdHKaPjShWi9YxnWX9x1fZ5dikvfY"),
+       D("スムーズパースートの表 IMG_6520","175JF8CF8dI2I3Xap1nahZPG8IyFJ15zL")],
+  history:"PPPDという常にふらついているようなめまいが15年半続いている。2週間前、車の助手席で前方の車のナンバーを見ながら可動域のアセスメントをした。<strong>車間距離が縮まると身体は固まり、車間距離が広がると身体がすっと軽くなった</strong>。（シェア会では「そこであることをしたら脅威の反応は起こらなくなった。私はどんなことをしたと思いますか？」というクイズ形式で提示）",
+  hypo:["<strong>眼球運動アセスメントを表にして気がついたこと：</strong>",
+        "・速いだけでなく、<strong>遅いことも脅威</strong> → 超遅いモードやメトロノームで卓球ボールの壁打ちで改善傾向",
+        "・左目が下がっていたが、<strong>右の動眼神経にもかなりの問題</strong>が発覚",
+        "・注視で真正面に脅威を感じるのは大問題",
+        "・両目の統合の問題 ─ 片目の結果がそのまま表れるところもあれば、両方合わせて良くなる／悪くなるところなど様々。片目の後、最後に両目でやるのはとても大事",
+        "・可動域で脅威の反応を調べたが、<strong>バランスの崩れるところとイコールではなかった</strong>",
+        "<strong>ひと言仮説：</strong>バランスの崩れとは、目の筋肉の動きが悪い、または目の筋肉が動いても身体の地図が不鮮明なために抗重力筋が働かない ─ つまり<strong>目から抗重力筋への連動が上手くいっていない状態</strong>ではないか。連動しないこと・筋力低下を引き起こすことも脳が身を守るための選択だとしたら、このめまいも立派な脅威の反応のひとつと考えられる。"],
+  assess:["<strong>眼と抗重力筋の対応表（筋力テストで確認）：</strong>",
+          "上直筋 ─ 脊柱起立筋／下直筋 ─ 内転筋／内側直筋 ─ 大腰筋・内転筋・脊柱起立筋・ハムストリング・大殿筋／外側直筋 ─ 腹直筋・大腿四頭筋／上斜筋 ─ 同側腸骨筋／下斜筋 ─ 体側腸骨筋",
+          "<strong>記録の取り方：</strong>サッカード（2026.8.14／タブレット・サイズ特大・全てメガネ使用）、注視（2026.8.13・9/3／ボードのシール10秒注視・直径15mm等）、スムーズパースート（2026.9.6／一方向モード・両間30秒または45秒）を、方向×左右眼×速度で ○△✕ の表にし、バランスが崩れたところを黄色で塗る。"],
+  reassessNote:"シート形式ではなく考察＋データ表の提出のため、before→after の欄は<strong>記録なし</strong>。改善傾向は「超遅いモード」「メトロノームで卓球ボールの壁打ち」で報告されている。",
+  outcome:"FNT-3（2026夏）の続き。眼球運動を表で可視化したことで、左目だけでなく右の動眼神経の問題、速い/遅い両方が脅威になること、両目統合の問題が見えた。めまい自体を「脅威の反応」として読み直す段階。",
+  learn:"アセスメントを表にして残すと、単発では見えない偏り（速度・方向・片目/両目）が浮かび上がる。可動域の脅威反応とバランスの崩れは一致しない。",
+  next:"目から抗重力筋への連動を鍛える。超遅いモード・メトロノームでの壁打ちを継続。"},
+
+ {id:"FNT-17",round:AUT,emoji:"🚒",title:"立ち幅跳びを伸ばしたい（25歳女性・消防士の体力テスト）",presenter:"G.T.さん",type:"アスリート",
+  chief:"消防士の体力テストでスコアを上げたいが、運動が苦手（今回は立ち幅跳び）",
+  sys:["固有受容","小脳","大脳基底核"],hit:"○ 当たり",out:"その場で変化",date:"2026-09-13",
+  approach:"各関節（足・膝・股関節・肘・肩）のモーターコントロール → 各関節を発声しながら高出力で動かす → 声をハブに高出力をまとめる",
+  src:[D("シート原本 IMG_6521","13iNOwv1cQ7aq7ttnV7ORV21RUeIOl9WP")],
+  history:"昔から体育が苦手で人より劣っていた。過去の立ち幅跳びは154cm。",
+  hypo:["<strong>疑った神経系：</strong>固有受容覚（股関節）／小脳／大脳基底核",
+        "<strong>なぜそう考えた：</strong>動作（ジャンプ）で膝や足首主体の動作になっていて、着地時の姿勢も高い。体全体のリズムが合っていない。",
+        "<strong>ひと言仮説：</strong>「操作性とリズム が 高出力・運動性 を抑制している（or 入力不足）」"],
+  assess:["<strong>最初のテスト：</strong>立ち幅跳び。",
+          "<strong>入れたドリル：</strong>各関節のモーターコントロール（足・膝・股関節・肘・肩）と、各関節を発声しながら高出力で動かす。声をハブに高出力をまとめる／発声による腹圧・体幹安定／錐体外路・網様体脊髄路の活性化（発声が脳幹に有効）。"],
+  before:"立ち幅跳び 154cm（過去の記録）。",
+  after:"立ち幅跳び <strong>180cm</strong>。",
+  outcome:"分離したワークを声というキーで統合したところ、その場で26cm伸びた。",
+  learn:"分離してワーク＋何かキー（今回は声）を作って統合＝うまくいくかも？"},
+
+ {id:"FNT-18",round:AUT,emoji:"🦿",title:"アキレス腱手術後の回復が良くない（50代女性）",presenter:"T.A.さん",type:"医療的ケア",
+  chief:"右アキレス腱が切れて手術をした。リハビリ3ヶ月経っても踵立ちできなくて硬さもとれない。リハビリで毎回怒られる",
+  sys:["末梢神経","固有受容","島皮質"],hit:"△ 一部",out:"継続改善中",
+  approach:"傷口を触る8方向に動かす → 腓骨神経・脛骨神経ストレッチ。現在はチューブを使い、いろんな方向に体重をかけるトレーニング",
+  src:[D("シート原本 IMG_6522","1RqEilN0-z5VNCmannj2ngzlspP4S2cdV")],
+  history:"3ヶ月前にアキレス腱断裂、手術の時点で5cm離開していた。リハビリでは患部のマッサージと踵上げの回数。マッサージでほぐしてもすぐ硬くなる。踵上げすると足首にガキッと硬い何かはまった感覚がして、それが痛くて回数できなかった。この時になって<strong>人工靱帯でぐるぐるになっていることを知る</strong>（痛いのはこの靱帯が硬かった）。リハビリの先生もその時まで人工靱帯手術の認識がなかった。その後もリハビリは変わらず、かかと上げを指導される。（「もう一生上がらない」「走れるようにならない」「反対側も絶対に切れる」などと言われた）",
+  hypo:["<strong>疑った神経系：</strong>レセプター／末梢神経／固有受容覚／島皮質",
+        "<strong>なぜそう考えた：</strong>傷口をさわるのも見るのも怖がっていた。同じ動きの練習しかしていなかった。癒着やギプス固定による末梢神経の問題。不安の蓄積。"],
+  assess:["<strong>最初のテスト：</strong>踵上げ。両足では右（患側）が左の粉くらいしか上がらない。片足では全く上がらない。",
+          "<strong>入れたドリル：</strong>① 傷口を触る8方向に動かす　② 腓骨神経・脛骨神経ストレッチ。"],
+  before:"両足では右が左の一部しか上がらない。片足では全く上がらない。",
+  after:"① 多少上がる程度　② <strong>両足・左右の高さが同じに。片足でも少しだけ上がるようになった</strong>。",
+  outcome:"「かかとが上がる」ことが確認できたので、その後のトレーニングにつながった。その後モーターコントロールなどで不安なく日常生活は送れている。現在は足にあまりフォーカスしないように、チューブを使って自由に楽しく動くトレーニング（2人でチューブに入り、お互いに引っぱったり回ったり不規則に動く）で、いろんな方向に体重をかける。下半身が軽くなり、肩腰の痛みも楽になる効果あり。",
+  learn:"絶対にこれ以上踵が上がらないと言われたことが、末梢神経のストレッチで上がる事が証明できたことが<strong>不安解消</strong>となった。",
+  sheet:{title:"補足（リハビリ経過）",
+    items:["リハビリでは右足の筋力が足りないと言われた → 筋力テストをしたら<strong>左より強かった</strong>（?）。",
+           "その後6ヶ月リハビリは続き、走る・ジャンプ・しゃがむなど問題なくできるようになったためリハビリ終了となったが、最後に「絶対また反対が切れますよ」とダメ押しされて終わったため、不安は残った。"]}},
+
+ {id:"FNT-19",round:AUT,emoji:"🧘",title:"肩首こり → 頭痛・吐き気（女性・ピラティス指導者）",presenter:"M.H.さん",type:"一般",
+  chief:"肩と首がバキバキに凝ってしまって、ひどいと頭痛から吐き気がするぐらいの症状になることがあって、ストレッチしたり、運動しても改善ができなくて",
+  sys:["前庭系","末梢神経","固有受容"],hit:"○ 当たり",out:"その場で変化",date:"2026-08-07",
+  approach:"耳石器（上下方向）へ振る ─ 足幅を広げて上下のバウンス＋視標を注視／顔面への刷毛刺激＋マッピング課題／脱力⇄牽引の脊髄反射／膝・股関節は右足の小指側で踏む",
+  src:[D("表 IMG_6523","1lO6kkpRcniJQ0x8BXMycl2_zHCQNY7-E"),
+       D("裏（答え合わせ）IMG_6524","15aicdQrOSmTqxRBLlnl_y653C5wFDag7")],
+  history:"この5年ほど。明確なきっかけは思い当たらない（本人は「単純に更年期だったりするのかな」と話す）。ストレッチ・運動・ピラティスはいずれも改善しない。運動すると血流が上がって頭痛が悪化するので、結局ひたすら温めるしかない。頭を下に下げる動作も避けている。<br><strong>問診で出てきた手がかり：</strong>「三半規管もとても弱くて」乗り物酔いがひどい（バスの後方席）／エレベーターが苦手「ヒューってなる」／ダウンドッグなど頭を下げるポジションを続けると頭がクラクラ→その後ずっと目が回る感じが残る／母がメニエール病／片足立ちが苦手、閉眼するとすぐこける／職業はピラティス指導者（もともと運動習慣はなく、冷え性・体力なしを直したくて始めた）。<br><strong>併存：</strong>右膝内側半月板にヒビ（普通に生活できるまで2年）。受傷のきっかけはピラティスで「正しいアライメント」に矯正された状態でフットワーク系を反復した後。以降、右の尻と内ももがどれだけストレッチしても張りっぱなし。開脚が3年戻らない。",
+  hypo:["<strong>疑った神経系：</strong>前庭系。ただし「三半規管」ではなく、<strong>上下方向の直線加速度を受け持つ耳石器（球形嚢）側</strong>。",
+        "・「三半規管が弱い」では粗すぎる。半規管は左右3つずつで6個、耳石器が左右2つずつで4個 ─ 全部で10個ある。10個のどこが弱いのか分からないと、改善のしようがない",
+        "・本人が最初に挙げた苦手＝<strong>エレベーター（上下の加速度）とダウンドッグ（頭を下げる）</strong>→ どちらも上下方向を指している。そこに繋がる眼球運動も上下方向になる",
+        "・つまり ─ <strong>答えは、本人が最初の3分で自分で言っていた。</strong>こちらはそれが本当かをチェックしにいっただけ",
+        "<strong>ひと言仮説：</strong>上下方向の加速度の処理が、首・頭部の症状を作っている。",
+        "<strong>膝について（別立ての仮説）：</strong>右膝内側の感覚が左と明確に違う（触られると「嫌な感じ」「変に動かされている感じ」、冷たさの感じ方も違う）。押して痛いポイントが<strong>伏在神経</strong>の走行と一致 → 末梢神経側の問題を疑う。受傷そのものより、その後の感覚の処理のされ方が変わったまま戻っていないと読む。"],
+  assess:["<strong>最初にやったテスト：</strong>首の側屈（右が行きづらい／引っ張られる）／ロンベルグ（足を揃えて閉眼立位＋軽く押して動揺をみる）／指鼻テスト（閉眼・片側が不安）／刷毛で顔面の左右差（右のほうが圧を強く感じる）／振動覚（上肢・右をやや強く感じる）／開脚（右の尻と内ももが突っ張る、この角度で痛い）。",
+          "<strong>入れたトレーニング：</strong>",
+          "・足幅を広げて<strong>上下のバウンス</strong>（＋視標を注視）",
+          "・顔面（左側）への刷毛刺激 → 触った指を当てるマッピング課題（人差し指・中指・薬指・小指）",
+          "・刷毛を頬に当てたまま上下バウンス＋視標に焦点、軽く顎を引く",
+          "・脱力 ⇄ 牽引を繰り返す脊髄反射のトレーニング",
+          "・<strong>膝・股関節の決め手：</strong>右足の小指側で踏む → 股関節を外旋・伸展、膝は伸ばしたまま骨盤を前傾 → 左足を踏み込んで戻すを反復",
+          "・併用：左手を内旋して後ろに引き、肘を伸ばして押しながら小さく円を描く＋目線を右下",
+          "※ 負荷は段階的に上げた。この人は「いけそう」と判断して強めに入れている。症状が出ている人には一つずつに減らす。"],
+  table:[["首の側屈","右が行きづらい・引っ張られる","だいぶ楽。引っ張られる感じが消えた"],
+         ["ロンベルグ（閉眼）","不安定。押すと崩れる","強めに押しても安定"],
+         ["開脚（右の尻・内もも）","3年この角度で痛い","痛みなく開いた ── 「3年ぶり」"]],
+  outcome:"「痛みなくここまで開けるようになると思わなかった。今日来てよかったです」。首・バランス・開脚の3つが同一セッション内で変化。",
+  learn:"答えは、本人が最初の3分で自分で言っている。<br>・「三半規管が弱い」で止めない。10個のどこかまで降りる。降りないと打つ手が決まらない<br>・伸ばしたい場所に意識を向けると、余計に硬くなる。反対の手を動かす意識に持っていく → 本人（ピラティス指導者）いわく「あの概念がひっくり返されました」<br>・分離と統合 ─ 普段まとめて受けている感覚を一度バラして学習させ、良い反応が出たら他と組み合わせる"},
+
+ {id:"FNT-20",round:AUT,emoji:"🏃",title:"右足が上がらない（男性・IT在宅・毎朝ランニング）",presenter:"M.H.さん",type:"一般",
+  chief:"うまく走れなくなってしまった。足が自分の思うように動かない。前かがみになって、右足があまり上がらない。そのために左足を突っ張って歩くような感じになる",
+  sys:["末梢神経","脊髄反射","固有受容"],hit:"○ 当たり",out:"その場で変化",date:"2026-08-07",
+  approach:"候補を①足部②脊髄反射③振動覚④大腿神経と順に当てて、一番変化を出すものを探す ─ <strong>本丸は大腿神経</strong>（鼠径靭帯のほぼ中央、大腿動脈の内側を上方へトラクション）",
+  src:[D("表 IMG_6525","1nYnkgU7K-2fBiRgMR663vQVSl9V_XXf4"),
+       D("裏（答え合わせ）IMG_6526","1d0BKrqrPemzQz9CyRpTcWJUzA_q883w2")],
+  history:"約1年。明確なきっかけはない。走っていて、たまに変な着き方をするようになった → 一度休んで歩くだけにし、再開したら走れなくなっていた。<br><strong>これまで試して効かなかったこと：</strong>股関節のフロアワーク、BDCの股関節ドリル（回すもの）─ 今回は効いていない。※ ただし過去の股関節痛は、同じYouTubeのワークで1週間で消えている（＝本人はやり方を知っている）。<br><strong>問診で出てきた手がかり：</strong>厚底シューズ（カーボンプレート入り）を常用「速く走れるけど、その分負荷がかかっていたのかも」／過去に腰を痛めた（痛いまま無理に走っていた）／走ると必ず右足でつまずく／走った後半、右の腸腰筋あたりが痛くなる／中臀筋のあたりも気になる。<br><strong>観察：</strong>速く歩くと右を引きずる。膝が曲がらない。MMTで右の股関節屈曲がホールドできない。",
+  hypo:["一つに決めず、候補を順に当てて、どれが一番変化を出すかを探す（＝その人のターニングポイント探し）。",
+        "① <strong>足部の骨の動き</strong> ─ 厚底＋プレートで足からの感覚が落ちている可能性",
+        "② <strong>脊髄反射（腰髄）</strong> ─ 過去の腰の痛め方。反射弓は腰髄にある",
+        "③ <strong>振動覚のレセプター（パチニ小体）</strong> ─ 動き始めの微細な振動を拾えていないのでは",
+        "④ <strong>大腿神経（末梢神経）</strong> ─ 股関節屈曲の脱力＋腸腰筋あたりの痛み"],
+  assess:["<strong>① 足部 ─ 少し効いたが、本丸ではない。</strong>壁につかまり右足を後ろに引いて足背をつけ、上に伸びたまま荷重をシフト → 左膝を曲げ伸ばし。かかとを外に倒すバリエーションも。→ 筋力は変わる。しかし歩行はほぼ変わらない。「これじゃないな」",
+          "<strong>② 脊髄反射。</strong>膝蓋腱反射：右が異常な反応。さらに叩くほど反応が落ちていく。手を握って牽引⇄脱力を反復（ジェンドラシック手技）→ 引っ張っているときのほうが正常に出る → そのままトレーニングに使う。→ 歩行が少し良くなる",
+          "<strong>③ 振動覚（パチニ小体）。</strong>足部で左右差。右が鈍い。振動は日常では珍しいが、動き出しの瞬間に生じているので、これを拾えないと歩き出しがおかしくなる。振動刺激＋閉眼・開眼を反復 →「強く感じるようになった」。シャープ／ダル（鋭い・鈍い）の識別課題 → 右の反応速度が遅い → そちらをトレーニング。→ 歩行が滑らかに。「足の感覚があります」",
+          "<strong>④ 大腿神経 ─ これが本丸。</strong>場所は鼠径靭帯のほぼ中央、大腿動脈の内側。押すと「嫌な感じ」が出る。そこを上方へトラクションしたまま、左足を一歩前に出して踏み出す動作を反復。自分でやる形：同じ場所を両手で上に引きながら、骨盤は後傾のまま背中を丸め、頭を入れる。※ 全体にテンションをかけるより、一部だけテンションを変えてやるほうが良かった（人によって調整が要る）"],
+  table:[["歩行","右を引きずる。膝が曲がらない","普通に歩ける ── 「1年ぶり」"],
+         ["MMT（右股関節屈曲）","ホールドできない","ホールドできる"],
+         ["走れるか","1年間できていない","「今走れそうです」"]],
+  outcome:"所要およそ15分。仮説は当たり（ただし単独ではなく、複数が重なっていた）。",
+  learn:"一つの原因を探すのをやめる。<br>・候補を順に当てて、一番変化が出たものがその人のターニングポイント。そこさえ掴めば、あとは本人が自分でやれる<br>・①〜③も効いてはいる。「効いた」と「本丸」は別物。効いたところで止まらない<br>・バイオメカニクス（厚底シューズ）と神経系はつながっている。どちらか一方ではなく、両方向で見る<br>・「1時間施術して良くなった、では“僕がいないと治らない”になってしまう。そうじゃないと伝えたい」"}
+];
+
+const STRIPE = {"単回で完結":"var(--ok)","継続改善中":"var(--ok)","その場で変化":"var(--ok)",
+                "現状維持・悪化なし":"var(--partial)","一時改善の反復":"var(--partial)"};
+const VCLASS = {"○ 当たり":"v-ok","△ 一部":"v-partial","✕ ハズレ":"v-miss","— 記録なし":"v-none"};
+
+const state = {q:"", round:new Set(), sys:new Set(), type:new Set(), out:new Set(), hit:new Set()};
+const esc = s => String(s).replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+
+function uniq(key, multi){
+  const m = new Map();
+  CASES.forEach(c => (multi ? c[key] : [c[key]]).forEach(v => m.set(v, (m.get(v)||0)+1)));
+  return [...m.entries()];
+}
+function buildChips(elId, values, bucket){
+  document.getElementById(elId).innerHTML = values.map(([v,n]) =>
+    `<button class="chip" type="button" aria-pressed="false" data-b="${bucket}" data-v="${esc(v)}">${esc(v)}<span class="n">${n}</span></button>`
+  ).join("");
+}
+function matches(c){
+  if (state.round.size && !state.round.has(c.round)) return false;
+  if (state.sys.size && ![...state.sys].every(s => c.sys.includes(s))) return false;
+  if (state.type.size && !state.type.has(c.type)) return false;
+  if (state.out.size && !state.out.has(c.out)) return false;
+  if (state.hit.size && !state.hit.has(c.hit)) return false;
+  if (state.q){
+    const hay = [c.id,c.title,c.chief,c.presenter,c.approach,c.history,c.learn,c.outcome,c.next||"",
+                 (c.hypo||[]).join(" "),(c.assess||[]).join(" "),c.before||"",c.after||"",
+                 (c.table||[]).flat().join(" "),(c.sheet?c.sheet.items.join(" "):"")].join(" ");
+    if (!hay.toLowerCase().includes(state.q.toLowerCase())) return false;
+  }
+  return true;
+}
+function sections(c){
+  const sec = (n,label,body) =>
+    `<div class="sec"><div class="num">${n}</div><div><h4>${label}</h4>${body}</div></div>`;
+  const lines = arr => arr.map(p => p.startsWith("・") || p.startsWith("①") || p.startsWith("②") ||
+    p.startsWith("③") || p.startsWith("④") || p.startsWith("※")
+    ? `<p>${p}</p>` : `<p>${p}</p>`).join("");
+
+  let h = sec("1","ヒストリー", `<p>${c.history}</p>`);
+  h += sec("2","仮説", lines(c.hypo));
+  h += sec("3","アセスメント &amp; トレーニング", lines(c.assess));
+
+  let re;
+  if (c.table){
+    re = `<dl class="ba">` + c.table.map(([t,b,a]) =>
+      `<dt>${esc(t)}</dt><dd><b>before</b> ${b}　→　<b>after</b> ${a}</dd>`).join("") + `</dl>`;
+  } else if (c.before || c.after){
+    re = `<dl class="ba"><dt>before</dt><dd>${c.before||"記録なし"}</dd>`+
+         `<dt>after</dt><dd>${c.after||"記録なし"}</dd></dl>`;
+  } else {
+    re = `<p>${c.reassessNote||"記録なし"}</p>`;
+  }
+  if (c.table && c.reassessNote) re += `<p>${c.reassessNote}</p>`;
+  h += sec("4","リアセスメント", re);
+  h += sec("5","アウトカム", `<p>${c.outcome}</p>`);
+
+  let tail = `<div class="note"><h5>学び</h5>${c.learn}</div>`;
+  if (c.next) tail += `<div class="note"><h5>次アクション</h5>${c.next}</div>`;
+  if (c.sheet) tail += `<div class="note"><h5>${c.sheet.title}</h5><ul>${c.sheet.items.map(i=>`<li>${i}</li>`).join("")}</ul></div>`;
+  return h + tail;
+}
+function render(){
+  const list = document.getElementById("list");
+  const shown = CASES.filter(matches);
+  document.getElementById("resultcount").textContent = `${shown.length} CASES`;
+  document.getElementById("empty").hidden = shown.length > 0;
+
+  list.innerHTML = shown.map(c => `
+    <li class="case">
+      <button class="case-head" type="button" aria-expanded="false" data-id="${c.id}"
+              style="--stripe:${STRIPE[c.out]||"var(--rule-strong)"}">
+        <span class="cid">${c.id}</span>
+        <span>
+          <span class="case-title">${c.emoji} ${esc(c.title)}</span>
+          <span class="case-chief">${esc(c.chief)}</span>
+          <span class="tagline"><span class="tag round">${esc(c.round)}</span>
+            ${c.sys.map(s=>`<span class="tag">${esc(s)}</span>`).join("")}
+            <span class="tag">${esc(c.type)}</span><span class="tag">${esc(c.out)}</span></span>
+        </span>
+        <span class="verdict ${VCLASS[c.hit]}">${esc(c.hit)}</span>
+      </button>
+      <div class="detail" id="d-${c.id}" hidden>
+        <p class="meta"><span>発表 <b>${esc(c.presenter)}</b></span>
+          ${c.date?`<span>セッション <b>${c.date}</b></span>`:""}
+          <span>主なアプローチ <b>${esc(c.approach)}</b></span></p>
+        ${sections(c)}
+        <div class="srcs">${c.src.map(([l,u])=>
+          `<a class="sheetlink" href="${u}" target="_blank" rel="noopener">${esc(l)} ↗</a>`).join("")}</div>
+      </div>
+    </li>`).join("");
+}
+
+document.getElementById("list").addEventListener("click", e => {
+  const btn = e.target.closest(".case-head");
+  if (!btn) return;
+  const d = document.getElementById("d-" + btn.dataset.id);
+  const open = btn.getAttribute("aria-expanded") === "true";
+  btn.setAttribute("aria-expanded", String(!open));
+  d.hidden = open;
+});
+document.querySelectorAll(".chips").forEach(box => box.addEventListener("click", e => {
+  const chip = e.target.closest(".chip");
+  if (!chip) return;
+  const set = state[chip.dataset.b], v = chip.dataset.v;
+  if (set.has(v)) set.delete(v); else set.add(v);
+  chip.setAttribute("aria-pressed", String(set.has(v)));
+  render();
+}));
+document.getElementById("q").addEventListener("input", e => { state.q = e.target.value.trim(); render(); });
+document.getElementById("reset").addEventListener("click", () => {
+  ["round","sys","type","out","hit"].forEach(k => state[k].clear());
+  state.q = ""; document.getElementById("q").value = "";
+  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed","false"));
+  render();
+});
+
+buildChips("f-round", uniq("round",false), "round");
+buildChips("f-sys", uniq("sys",true).sort((a,b)=>b[1]-a[1]), "sys");
+buildChips("f-type", uniq("type",false).sort((a,b)=>b[1]-a[1]), "type");
+buildChips("f-out", uniq("out",false).sort((a,b)=>b[1]-a[1]), "out");
+buildChips("f-hit", uniq("hit",false).sort((a,b)=>b[1]-a[1]), "hit");
+document.getElementById("cnt-total").textContent = CASES.length;
+render();
+</script>
